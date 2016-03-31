@@ -17,10 +17,10 @@
         <attr name="otherButtonSpacing" format="dimension|reference"/>
         <attr name="cancelButtonMarginTop" format="dimension|reference"/>
         <attr name="actionSheetTextSize" format="dimension|reference"/>
-        <attr name="titleBackground" format="color|reference"/>
-        <attr name="titleTextColor" format="color|reference"/>
-        <attr name="titleTextSize" format="dimension|reference"/>
-        <attr name="titleBottomSpacing" format="dimension|reference"/>
+        <attr name="actionSheetTitleBackground" format="color|reference"/>
+        <attr name="actionSheetTitleTextColor" format="color|reference"/>
+        <attr name="actionSheetTitleTextSize" format="dimension|reference"/>
+        <attr name="actionSheetTitleBottomSpacing" format="dimension|reference"/>
     </declare-styleable>
 
 </resources>

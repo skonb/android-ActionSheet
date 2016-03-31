@@ -380,11 +380,11 @@ public class ActionSheet extends Fragment implements View.OnClickListener {
                 R.styleable.ActionSheet_cancelButtonMarginTop,
                 attrs.cancelButtonMarginTop);
         attrs.actionSheetTextSize = a.getDimensionPixelSize(R.styleable.ActionSheet_actionSheetTextSize, (int) attrs.actionSheetTextSize);
-        attrs.titleTextColor = a.getColor(R.styleable.ActionSheet_titleTextColor, attrs.titleTextColor);
-        attrs.titleTextSize = a.getDimensionPixelSize(R.styleable.ActionSheet_titleTextSize, (int) attrs.titleTextSize);
-        attrs.titleMarginBottom = a.getDimensionPixelSize(R.styleable.ActionSheet_titleBottomSpacing, (int) attrs.titleMarginBottom);
+        attrs.titleTextColor = a.getColor(R.styleable.ActionSheet_actionSheetTitleTextColor, attrs.titleTextColor);
+        attrs.titleTextSize = a.getDimensionPixelSize(R.styleable.ActionSheet_actionSheetTitleTextSize, (int) attrs.titleTextSize);
+        attrs.titleMarginBottom = a.getDimensionPixelSize(R.styleable.ActionSheet_actionSheetTitleBottomSpacing, (int) attrs.titleMarginBottom);
 
-        Drawable titleBackground = a.getDrawable(R.styleable.ActionSheet_titleBackground);
+        Drawable titleBackground = a.getDrawable(R.styleable.ActionSheet_actionSheetTitleBackground);
         if (titleBackground != null) {
             attrs.titleBackground = titleBackground;
         }
