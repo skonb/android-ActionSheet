@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.baoyz.actionsheet.ActionSheet;
+import com.baoyz.android_actionsheet.R;
 
 public class MainActivity extends AppCompatActivity implements
         ActionSheet.ActionSheetListener {
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements
 
     public void showActionSheet() {
         ActionSheet.createBuilder(this, getSupportFragmentManager())
+                .setTitle("Test")
                 .setCancelButtonTitle("Cancel")
                 .setOtherButtonTitles("Item1", "Item2", "Item3", "Item4")
                 .setCancelableOnTouchOutside(true).setListener(this).show();

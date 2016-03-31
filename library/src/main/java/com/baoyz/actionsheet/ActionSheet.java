@@ -23,7 +23,6 @@
  */
 package com.baoyz.actionsheet;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -38,7 +37,6 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyCharacterMap;
@@ -54,6 +52,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 /**
  * android-ActionSheet
@@ -61,6 +60,8 @@ import android.widget.LinearLayout;
  */
 public class ActionSheet extends Fragment implements View.OnClickListener {
 
+
+    private static final String ARG_TITLE = "title";
     private static final String ARG_CANCEL_BUTTON_TITLE = "cancel_button_title";
     private static final String ARG_OTHER_BUTTON_TITLES = "other_button_titles";
     private static final String ARG_CANCELABLE_ONTOUCHOUTSIDE = "cancelable_ontouchoutside";
@@ -80,7 +81,7 @@ public class ActionSheet extends Fragment implements View.OnClickListener {
     private Attributes mAttrs;
     private boolean isCancel = true;
 
-    public void show(FragmentManager manager, String tag) {
+    public void show(final FragmentManager manager, final String tag) {
         if (!mDismissed || manager.isDestroyed()) {
             return;
         }
@@ -88,10 +89,12 @@ public class ActionSheet extends Fragment implements View.OnClickListener {
         new Handler().post(new Runnable() {
             public void run() {
                 FragmentTransaction ft = manager.beginTransaction();
-                ft.add(this, tag);
+                ft.add(ActionSheet.this, tag);
                 ft.addToBackStack(null);
                 ft.commitAllowingStateLoss();
-            });
+            }
+
+        });
     }
 
     public void dismiss() {
@@ -139,7 +142,6 @@ public class ActionSheet extends Fragment implements View.OnClickListener {
 
         mView = createView();
         mGroup = (ViewGroup) getActivity().getWindow().getDecorView();
-
         createItems();
 
         mGroup.addView(mView);
@@ -250,6 +252,19 @@ public class ActionSheet extends Fragment implements View.OnClickListener {
     }
 
     private void createItems() {
+        if (getTitle() != null) {
+            TextView textView = new TextView(getActivity());
+            textView.setGravity(Gravity.CENTER);
+            LinearLayout.LayoutParams layoutParams = createButtonLayoutParams();
+            layoutParams.bottomMargin = mAttrs.titleMarginBottom;
+            textView.setLayoutParams(createButtonLayoutParams());
+
+            textView.setText(getTitle());
+            textView.setTextSize(mAttrs.titleTextSize);
+            textView.setTextColor(mAttrs.titleTextColor);
+            textView.setBackgroundDrawable(mAttrs.titleBackground);
+            mPanel.addView(textView);
+        }
         String[] titles = getOtherButtonTitles();
         if (titles != null) {
             for (int i = 0; i < titles.length; i++) {
@@ -365,7 +380,14 @@ public class ActionSheet extends Fragment implements View.OnClickListener {
                 R.styleable.ActionSheet_cancelButtonMarginTop,
                 attrs.cancelButtonMarginTop);
         attrs.actionSheetTextSize = a.getDimensionPixelSize(R.styleable.ActionSheet_actionSheetTextSize, (int) attrs.actionSheetTextSize);
+        attrs.titleTextColor = a.getColor(R.styleable.ActionSheet_titleTextColor, attrs.titleTextColor);
+        attrs.titleTextSize = a.getDimensionPixelSize(R.styleable.ActionSheet_titleTextSize, (int) attrs.titleTextSize);
+        attrs.titleMarginBottom = a.getDimensionPixelSize(R.styleable.ActionSheet_titleBottomSpacing, (int) attrs.titleMarginBottom);
 
+        Drawable titleBackground = a.getDrawable(R.styleable.ActionSheet_titleBackground);
+        if (titleBackground != null) {
+            attrs.titleBackground = titleBackground;
+        }
         a.recycle();
         return attrs;
     }
@@ -380,6 +402,10 @@ public class ActionSheet extends Fragment implements View.OnClickListener {
 
     private boolean getCancelableOnTouchOutside() {
         return getArguments().getBoolean(ARG_CANCELABLE_ONTOUCHOUTSIDE);
+    }
+
+    private String getTitle() {
+        return getArguments().getString(ARG_TITLE);
     }
 
     public void setActionSheetListener(ActionSheetListener listener) {
@@ -424,6 +450,10 @@ public class ActionSheet extends Fragment implements View.OnClickListener {
             this.otherButtonSpacing = dp2px(2);
             this.cancelButtonMarginTop = dp2px(10);
             this.actionSheetTextSize = dp2px(16);
+            this.titleTextSize = dp2px(12);
+            this.titleTextColor = Color.GRAY;
+            this.titleMarginBottom = dp2px(10);
+            this.titleBackground = new ColorDrawable(Color.GRAY);
         }
 
         private int dp2px(int dp) {
@@ -448,18 +478,23 @@ public class ActionSheet extends Fragment implements View.OnClickListener {
         Drawable otherButtonMiddleBackground;
         Drawable otherButtonBottomBackground;
         Drawable otherButtonSingleBackground;
+        Drawable titleBackground;
         int cancelButtonTextColor;
         int otherButtonTextColor;
         int padding;
         int otherButtonSpacing;
         int cancelButtonMarginTop;
         float actionSheetTextSize;
+        float titleTextSize;
+        int titleTextColor;
+        int titleMarginBottom;
     }
 
     public static class Builder {
 
         private Context mContext;
         private FragmentManager mFragmentManager;
+        private String mTitle;
         private String mCancelButtonTitle;
         private String[] mOtherButtonTitles;
         private String mTag = "actionSheet";
@@ -485,6 +520,11 @@ public class ActionSheet extends Fragment implements View.OnClickListener {
             return this;
         }
 
+        public Builder setTitle(String title) {
+            mTitle = title;
+            return this;
+        }
+
         public Builder setTag(String tag) {
             mTag = tag;
             return this;
@@ -502,6 +542,7 @@ public class ActionSheet extends Fragment implements View.OnClickListener {
 
         public Bundle prepareArguments() {
             Bundle bundle = new Bundle();
+            bundle.putString(ARG_TITLE, mTitle);
             bundle.putString(ARG_CANCEL_BUTTON_TITLE, mCancelButtonTitle);
             bundle.putStringArray(ARG_OTHER_BUTTON_TITLES, mOtherButtonTitles);
             bundle.putBoolean(ARG_CANCELABLE_ONTOUCHOUTSIDE,
